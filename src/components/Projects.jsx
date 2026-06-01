@@ -182,10 +182,10 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
       {/* Heading */}
       <div style={{ textAlign: 'center', zIndex: 2 }}>
         <p style={{ color: textColor, opacity: 0.5, fontSize: '0.82rem', letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 10px' }}>
-          My Work
+          MY WORK
         </p>
         <h2 style={{ color: textColor, fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 700, margin: 0, letterSpacing: '-1px', lineHeight: 1 }}>
-          Projects
+          PROJECTS
         </h2>
       </div>
 

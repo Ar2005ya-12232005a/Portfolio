@@ -170,8 +170,8 @@ export default function AboutMe({ theme = "dark" }) {
 
           <FadeSlide delay={0.08}>
             <h2 className="about-headline" style={{ color: text }}>
-              Building things<br />
-              that <em>matter.</em>
+              BUILDING THINGS<br />
+              THAT <em>MATTER.</em>
             </h2>
           </FadeSlide>
 
