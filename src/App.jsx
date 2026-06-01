@@ -7,6 +7,7 @@ import Projects from './components/Projects'
 import AboutMe from './components/AboutMe'
 import IsoSocials from './components/IsoSocials'
 import TechStack from './components/TechStack'
+import Certificates from './components/Certificates'
 import Contact from './components/Contact'
 
 // Shared easing
@@ -19,6 +20,34 @@ function fadeUp(delay = 0, y = 30) {
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.75, delay, ease: EASE },
   }
+}
+
+// Scroll-triggered wrapper — fades + slides up when section enters viewport
+function ScrollReveal({ children, delay = 0 }) {
+  const ref = React.useRef(null)
+  const [visible, setVisible] = React.useState(false)
+
+  React.useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect() } },
+      { threshold: 0.08 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 48 }}
+      animate={visible ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.75, delay, ease: EASE }}
+    >
+      {children}
+    </motion.div>
+  )
 }
 
 const App = () => {
@@ -160,8 +189,15 @@ const App = () => {
         <TechStack theme={theme} />
       </div>
 
+      {/* Certificates */}
+      <ScrollReveal>
+        <div id="certificates" style={{ position: 'relative', zIndex: 1, marginTop: isMobile ? '32px' : '0px' }}>
+          <Certificates theme={theme} />
+        </div>
+      </ScrollReveal>
+
       {/* Contact */}
-      <div id="contact" style={{ position: 'relative', zIndex: 1, marginTop: isMobile ? '-40px' : '-20px' }}>
+      <div id="contact" style={{ position: 'relative', zIndex: 1, marginTop: isMobile ? '-20px' : '0px' }}>
         <Contact theme={theme} />
       </div>
 

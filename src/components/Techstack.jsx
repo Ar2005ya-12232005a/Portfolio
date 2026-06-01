@@ -12,6 +12,15 @@ export default function TechStack({ theme = 'dark' }) {
   const subColor  = isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
   const trackBg   = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
 
+  // B&W filter: grayscale + brightness/contrast tuned per theme
+  const iconFilter = isDark
+    ? 'grayscale(1) brightness(0.85) contrast(1.1)'
+    : 'grayscale(1) brightness(0.6) contrast(1.2)';
+
+  const iconHoverFilter = isDark
+    ? 'grayscale(1) brightness(1.1) contrast(1.1)'
+    : 'grayscale(1) brightness(0.35) contrast(1.3)';
+
   const fillGradients = [
     'linear-gradient(90deg, #888 0%, #e0e0e0 50%, #aaa 100%)',
     'linear-gradient(90deg, #777 0%, #d0d0d0 50%, #999 100%)',
@@ -216,7 +225,11 @@ export default function TechStack({ theme = 'dark' }) {
           width: 40px;
           height: 40px;
           object-fit: contain;
-          ${isDark ? 'filter: brightness(0.9);' : ''}
+          filter: ${iconFilter};
+          transition: filter 0.25s ease;
+        }
+        .tool-icon:hover img {
+          filter: ${iconHoverFilter};
         }
         .tool-icon span {
           font-size: 0.5rem;
@@ -225,9 +238,6 @@ export default function TechStack({ theme = 'dark' }) {
           letter-spacing: 0.03em;
           text-align: center;
           line-height: 1;
-        }
-        .tool-icon.invert-dark img {
-          ${isDark ? 'filter: invert(1) brightness(0.85);' : ''}
         }
 
         .tools-grid {
@@ -349,9 +359,7 @@ export default function TechStack({ theme = 'dark' }) {
               {tools.map(({ name, icon }, i) => (
                 <motion.div
                   key={name}
-                  className={`tool-icon${
-                    name === 'GitHub' || name === 'Next.js' || name === 'Express' ? ' invert-dark' : ''
-                  }`}
+                  className="tool-icon"
                   title={name}
                   initial={{ opacity: 0, y: 20, scale: 0.85 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}

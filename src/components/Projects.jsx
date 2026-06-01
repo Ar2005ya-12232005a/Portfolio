@@ -3,39 +3,46 @@ import { motion, useInView } from 'framer-motion'
 
 const DEFAULT_PROJECTS = [
   {
-    image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80',
-    title: 'Project One',
-    description: 'A short description of what this project does and the tech behind it.',
-    link: '#',
-    buttonText: 'View Project',
+    image: '/Ai-Career_Predictor.png',
+    title: 'AI CAREER PREDICTOR',
+    description: 'AN AI-POWERED TOOL THAT PREDICTS CAREER PATHS BASED ON YOUR SKILLS AND INTERESTS.',
+    link: 'https://github.com/Ar2005ya-12232005a/AI_Career_Predictor_Model',
+    buttonText: 'VIEW PROJECT',
   },
   {
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80',
-    title: 'Project Two',
-    description: 'Another cool project with a brief description of its purpose.',
-    link: '#',
-    buttonText: 'View Project',
+    image: '/Documind.png',
+    title: 'DOCUMIND',
+    description: 'A SMART DOCUMENT ASSISTANT THAT LETS YOU CHAT WITH YOUR PDFS AND FILES.',
+    link: 'https://github.com/Ar2005ya-12232005a/RAG_Q-A',
+    buttonText: 'VIEW PROJECT',
   },
   {
-    image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=80',
-    title: 'Project Three',
-    description: 'A third project showcasing your skills and creativity.',
-    link: '#',
-    buttonText: 'View Project',
+    image: '/Ecommerce.png',
+    title: 'E-COMMERCE STORE',
+    description: 'A FULL-STACK E-COMMERCE PLATFORM WITH CART, PAYMENTS, AND AN ADMIN DASHBOARD.',
+    link: 'https://e-commercefrontend-nu.vercel.app/',
+    buttonText: 'VIEW PROJECT',
   },
   {
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=80',
-    title: 'Project Four',
-    description: 'Yet another project with something interesting to show.',
-    link: '#',
-    buttonText: 'View Project',
+    image: '/Mindsense.png',
+    title: 'MINDSENSE',
+    description: 'A MENTAL WELLNESS APP THAT TRACKS MOOD PATTERNS AND PROVIDES PERSONALIZED INSIGHTS.',
+    link: 'https://github.com/Ar2005ya-12232005a/Mental_Health_Detector',
+    buttonText: 'VIEW PROJECT',
   },
   {
-    image: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80',
-    title: 'Project Five',
-    description: 'A final showcase project with a compelling description.',
-    link: '#',
-    buttonText: 'View Project',
+    image: '/ToxiScan.png',
+    title: 'TOXISCAN',
+    description: 'A REAL-TIME TOXICITY DETECTION TOOL FOR ONLINE CONTENT MODERATION.',
+    link: 'https://github.com/Ar2005ya-12232005a/Drug_Toxicity',
+    buttonText: 'VIEW PROJECT',
+  },
+  {
+    image: '/Plant.png',
+    title: 'PLANT DISEASE DETECTOR',
+    description: 'A DEEP LEARNING MODEL THAT IDENTIFIES PLANT DISEASES FROM LEAF IMAGES WITH HIGH ACCURACY.',
+    link: 'https://github.com/Ar2005ya-12232005a/Plant_Leaf_Disease_Predictor',
+    buttonText: 'VIEW PROJECT',
   },
 ]
 
@@ -51,19 +58,22 @@ function TiltCard({ children, isActive, cardSize, style, ...rest }) {
 
   const MAX_TILT = isActive ? 12 : 7
 
-  const handleMouseMove = useCallback(e => {
-    const el = ref.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const cx = rect.left + rect.width / 2
-    const cy = rect.top + rect.height / 2
-    const dx = (e.clientX - cx) / (rect.width / 2)
-    const dy = (e.clientY - cy) / (rect.height / 2)
-    targetTilt.current = {
-      x: clamp(-dy * MAX_TILT, -MAX_TILT, MAX_TILT),
-      y: clamp(dx * MAX_TILT, -MAX_TILT, MAX_TILT),
-    }
-  }, [MAX_TILT])
+  const handleMouseMove = useCallback(
+    e => {
+      const el = ref.current
+      if (!el) return
+      const rect = el.getBoundingClientRect()
+      const cx = rect.left + rect.width / 2
+      const cy = rect.top + rect.height / 2
+      const dx = (e.clientX - cx) / (rect.width / 2)
+      const dy = (e.clientY - cy) / (rect.height / 2)
+      targetTilt.current = {
+        x: clamp(-dy * MAX_TILT, -MAX_TILT, MAX_TILT),
+        y: clamp(dx * MAX_TILT, -MAX_TILT, MAX_TILT),
+      }
+    },
+    [MAX_TILT]
+  )
 
   const handleMouseLeave = useCallback(() => {
     targetTilt.current = { x: 0, y: 0 }
@@ -90,10 +100,7 @@ function TiltCard({ children, isActive, cardSize, style, ...rest }) {
   }, [])
 
   return (
-    <motion.div
-      {...rest}
-      style={{ ...style, perspective: 800 }}
-    >
+    <motion.div {...rest} style={{ ...style, perspective: 800 }}>
       <div
         ref={ref}
         onMouseMove={handleMouseMove}
@@ -118,7 +125,6 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
   const [frameWidth, setFrameWidth] = useState(1200)
   const [activeIndex, setActiveIndex] = useState(Math.floor(projects.length / 2))
 
-  // Watch the carousel strip — fires when the CARDS are in view, not the heading
   const carouselInView = useInView(carouselRef, { once: true, amount: 0.5 })
 
   const textColor = theme === 'dark' ? '#fff' : '#111'
@@ -144,8 +150,14 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
   const spacing = isMobile ? cardSize * 0.88 : 200
 
   const goTo = useCallback(i => setActiveIndex(clamp(i, 0, projects.length - 1)), [projects.length])
-  const prev = useCallback(() => setActiveIndex(c => c === 0 ? projects.length - 1 : c - 1), [projects.length])
-  const next = useCallback(() => setActiveIndex(c => c === projects.length - 1 ? 0 : c + 1), [projects.length])
+  const prev = useCallback(
+    () => setActiveIndex(c => (c === 0 ? projects.length - 1 : c - 1)),
+    [projects.length]
+  )
+  const next = useCallback(
+    () => setActiveIndex(c => (c === projects.length - 1 ? 0 : c + 1)),
+    [projects.length]
+  )
 
   useEffect(() => {
     const onKey = e => {
@@ -156,11 +168,14 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
     return () => window.removeEventListener('keydown', onKey)
   }, [prev, next])
 
-  const handleDragEnd = useCallback((_, info) => {
-    const threshold = isMobile ? 36 : 56
-    if (info.offset.x > threshold) prev()
-    else if (info.offset.x < -threshold) next()
-  }, [isMobile, prev, next])
+  const handleDragEnd = useCallback(
+    (_, info) => {
+      const threshold = isMobile ? 36 : 56
+      if (info.offset.x > threshold) prev()
+      else if (info.offset.x < -threshold) next()
+    },
+    [isMobile, prev, next]
+  )
 
   return (
     <section
@@ -181,15 +196,33 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
     >
       {/* Heading */}
       <div style={{ textAlign: 'center', zIndex: 2 }}>
-        <p style={{ color: textColor, opacity: 0.5, fontSize: '0.82rem', letterSpacing: '0.18em', textTransform: 'uppercase', margin: '0 0 10px' }}>
+        <p
+          style={{
+            color: textColor,
+            opacity: 0.5,
+            fontSize: '0.82rem',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            margin: '0 0 10px',
+          }}
+        >
           MY WORK
         </p>
-        <h2 style={{ color: textColor, fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 700, margin: 0, letterSpacing: '-1px', lineHeight: 1 }}>
+        <h2
+          style={{
+            color: textColor,
+            fontSize: 'clamp(2rem, 5vw, 4rem)',
+            fontWeight: 700,
+            margin: 0,
+            letterSpacing: '-1px',
+            lineHeight: 1,
+          }}
+        >
           PROJECTS
         </h2>
       </div>
 
-      {/* Cards strip — this ref is what triggers the animation */}
+      {/* Cards strip */}
       <div
         ref={carouselRef}
         style={{
@@ -241,7 +274,9 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
                     key={index}
                     isActive={isActive}
                     cardSize={cardSize}
-                    onClick={() => { if (!isActive) goTo(index) }}
+                    onClick={() => {
+                      if (!isActive) goTo(index)
+                    }}
                     animate={{ x, scale, opacity: absDistance > 2 ? 0.4 : 1 }}
                     transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
                     style={{
@@ -276,6 +311,7 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
                         width: '100%',
                         height: '100%',
                         objectFit: 'cover',
+                        objectPosition: 'top center',
                         userSelect: 'none',
                       }}
                     />
@@ -284,7 +320,8 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
                       style={{
                         position: 'absolute',
                         inset: 0,
-                        background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
+                        background:
+                          'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
                         opacity: isActive ? 1 : 0.6,
                         transition: 'opacity 0.5s ease',
                       }}
@@ -314,7 +351,9 @@ export default function Projects({ theme = 'dark', projects = DEFAULT_PROJECTS }
                             style={{
                               color: '#fff',
                               margin: 0,
-                              fontSize: isMobile ? 'clamp(1.1rem, 5vw, 1.5rem)' : 'clamp(1.2rem, 2.5vw, 1.8rem)',
+                              fontSize: isMobile
+                                ? 'clamp(1.1rem, 5vw, 1.5rem)'
+                                : 'clamp(1.2rem, 2.5vw, 1.8rem)',
                               fontWeight: 700,
                               letterSpacing: '-0.02em',
                               lineHeight: 1.1,

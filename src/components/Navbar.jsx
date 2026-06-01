@@ -15,6 +15,19 @@ export default function Navbar({ theme = 'dark', onToggle }) {
 
   const links = ['Home', 'About', 'Projects', 'Contact'];
 
+  const sectionIds = {
+    Home: 'home',
+    About: 'about',
+    Projects: 'projects',
+    Contact: 'contact',
+  };
+
+  const scrollTo = (link) => {
+    const el = document.getElementById(sectionIds[link]);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setMenuOpen(false);
+  };
+
   const textColor = isDark ? '#fff' : '#111';
   const subTextColor = isDark ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.55)';
   const hoverBg = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
@@ -131,7 +144,6 @@ export default function Navbar({ theme = 'dark', onToggle }) {
         }
       `}</style>
 
-      {/* Navbar pill — slides down from top on load */}
       <motion.div
         initial={{ opacity: 0, y: -24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -166,7 +178,6 @@ export default function Navbar({ theme = 'dark', onToggle }) {
           transition: 'background 0.3s, border 0.3s',
         }}>
 
-          {/* Logo */}
           <div style={{
             fontWeight: 600,
             fontSize: '0.95rem',
@@ -178,7 +189,6 @@ export default function Navbar({ theme = 'dark', onToggle }) {
             Portfolio
           </div>
 
-          {/* Desktop links + toggle — each link staggers in */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="desktop-nav">
             {links.map((link, i) => (
               <motion.button
@@ -187,7 +197,7 @@ export default function Navbar({ theme = 'dark', onToggle }) {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.15 + i * 0.08, ease: EASE }}
-                onClick={() => {}}
+                onClick={() => scrollTo(link)}
               >
                 {link}
               </motion.button>
@@ -202,7 +212,6 @@ export default function Navbar({ theme = 'dark', onToggle }) {
             </motion.div>
           </div>
 
-          {/* Mobile: toggle + hamburger */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }} className="mobile-nav">
             <Toggle />
             <button
@@ -219,7 +228,6 @@ export default function Navbar({ theme = 'dark', onToggle }) {
         </nav>
       </motion.div>
 
-      {/* Mobile fullscreen menu — animates in/out */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -248,7 +256,7 @@ export default function Navbar({ theme = 'dark', onToggle }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: i * 0.07, ease: EASE }}
-                onClick={() => setMenuOpen(false)}
+                onClick={() => scrollTo(link)}
               >
                 {link}
               </motion.button>

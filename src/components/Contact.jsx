@@ -111,7 +111,7 @@ export default function Contact({ theme = 'dark' }) {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap');
+       
 
         .contact-section {
           position: relative;
@@ -119,7 +119,7 @@ export default function Contact({ theme = 'dark' }) {
           width: 100%;
           padding: clamp(48px, 8vw, 100px) clamp(16px, 5vw, 60px);
           box-sizing: border-box;
-          font-family: 'DM Mono', monospace;
+          
         }
 
         .contact-inner {
@@ -151,9 +151,9 @@ export default function Contact({ theme = 'dark' }) {
         }
 
         .contact-headline {
-          font-family: 'Instrument Serif', Georgia, serif;
+         
           font-size: clamp(2.2rem, 5.5vw, 3.8rem);
-          font-weight: 400;
+          font-weight: 600;
           line-height: 1.06;
           letter-spacing: -0.02em;
           margin: 0 0 clamp(22px, 4vw, 36px);
@@ -161,7 +161,7 @@ export default function Contact({ theme = 'dark' }) {
         }
         .contact-headline em {
           font-style: italic;
-          color: ${accent};
+          color: #4a4b4b;
         }
 
         .card-wrap {
@@ -482,7 +482,7 @@ export default function Contact({ theme = 'dark' }) {
         textTransform: 'uppercase',
         color: muted,
       }}>
-        © 2005 Arya Sankar — All Rights Reserved
+        © 2026 Arya Sankar — All Rights Reserved
       </footer>
     </>
   );

@@ -49,17 +49,25 @@ export default function AboutMe({ theme = "dark" }) {
   const text  = isDark ? "#e8eaf0"               : "#111111";
   const muted = isDark ? "rgba(232,234,240,0.5)" : "rgba(20,20,20,0.55)";
 
+  const cvBg      = isDark ? "#1e1e1e" : "#e2e2e2";
+  const cvShadow1 = isDark ? "#0d0d0d" : "#bebebe";
+  const cvShadow2 = isDark ? "#2e2e2e" : "#ffffff";
+  const cvText    = isDark ? "#e8eaf0" : "#111111";
+  const cvMuted   = isDark ? "rgba(232,234,240,0.45)" : "rgba(20,20,20,0.45)";
+  const shineColor = isDark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.75)";
+
   return (
     <>
       <style>{`
+        
+
         .about-section {
           --accent:  #666665;
           --accent2: #4a4b4b;
-          --serif: 'Instrument Serif', Georgia, serif;
-          --mono:  'DM Mono', monospace;
+          
 
           position: relative;
-          font-family: var(--mono);
+        
           overflow: hidden;
           padding: clamp(60px, 10vw, 140px) clamp(20px, 6vw, 80px);
           min-height: 100vh;
@@ -74,7 +82,7 @@ export default function AboutMe({ theme = "dark" }) {
         }
 
         .about-eyebrow {
-          font-family: var(--mono);
+         
           font-size: clamp(0.95rem, 2vw, 1.3rem);
           letter-spacing: 0.22em;
           text-transform: uppercase;
@@ -95,15 +103,15 @@ export default function AboutMe({ theme = "dark" }) {
         }
 
         .about-headline {
-          font-family: var(--serif);
+          
           font-size: clamp(1.9rem, 4.5vw, 3.8rem);
-          font-weight: 400;
+          font-weight: 600;
           line-height: 1;
           margin: 0 0 clamp(20px, 3vw, 36px);
           letter-spacing: -0.02em;
         }
         .about-headline em {
-          font-style: italic;
+          
           color: var(--accent);
         }
 
@@ -128,6 +136,115 @@ export default function AboutMe({ theme = "dark" }) {
         }
         .about-para strong { font-weight: 500; }
 
+        /* ── CV Button ── */
+        .cv-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 11px;
+          margin-top: clamp(28px, 4vw, 48px);
+          padding: 14px 26px;
+          border-radius: 10px;
+          background: ${cvBg};
+          box-shadow: 6px 6px 14px ${cvShadow1}, -6px -6px 14px ${cvShadow2};
+          text-decoration: none;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: box-shadow 0.3s, transform 0.2s;
+          border: none;
+          outline: none;
+        }
+        .cv-btn::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            135deg,
+            rgba(255,255,255,0.07) 0%,
+            rgba(255,255,255,0.01) 50%,
+            rgba(255,255,255,0.05) 100%
+          );
+          border-radius: 10px;
+          pointer-events: none;
+        }
+        /* shine sweep */
+        .cv-btn::after {
+          content: '';
+          position: absolute;
+          top: -60%;
+          left: -70%;
+          width: 55%;
+          height: 200%;
+          background: linear-gradient(
+            105deg,
+            transparent 20%,
+            ${shineColor} 50%,
+            transparent 80%
+          );
+          transform: skewX(-15deg);
+          transition: left 0.55s ease;
+          pointer-events: none;
+        }
+        .cv-btn:hover::after {
+          left: 120%;
+        }
+        .cv-btn:hover {
+          box-shadow: 8px 8px 20px ${cvShadow1}, -8px -8px 20px ${cvShadow2};
+          transform: translateY(-2px);
+        }
+        .cv-btn:active {
+          transform: translateY(0px);
+          box-shadow: 4px 4px 10px ${cvShadow1}, -4px -4px 10px ${cvShadow2};
+        }
+
+        .cv-btn-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          width: 32px;
+          height: 32px;
+          border-radius: 7px;
+          background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+          position: relative;
+          z-index: 1;
+        }
+        .cv-btn-icon svg {
+          width: 16px;
+          height: 16px;
+          stroke: #fff;
+          fill: none;
+          stroke-width: 2;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        .cv-btn-text {
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
+          position: relative;
+          z-index: 1;
+          text-align: left;
+        }
+        .cv-btn-label {
+          font-family: var(--mono);
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: ${cvMuted};
+          line-height: 1;
+        }
+        .cv-btn-action {
+          font-family: var(--mono);
+          font-size: 0.92rem;
+          font-weight: 500;
+          letter-spacing: 0.04em;
+          color: ${cvText};
+          line-height: 1.3;
+        }
+
         /* Mobile image — hidden on desktop */
         .about-mobile-img {
           display: none;
@@ -149,6 +266,10 @@ export default function AboutMe({ theme = "dark" }) {
             object-fit: cover;
             object-position: top center;
             display: block;
+          }
+          .cv-btn {
+            width: 100%;
+            justify-content: center;
           }
         }
       `}</style>
@@ -196,6 +317,28 @@ export default function AboutMe({ theme = "dark" }) {
               </FadeSlide>
             ))}
           </div>
+
+          {/* ── Download CV ── */}
+          <FadeSlide delay={0.46} direction="up">
+            <a
+              href="/STANDUP_FINAL.pdf"
+              download
+              className="cv-btn"
+              aria-label="Download CV"
+            >
+              <span className="cv-btn-icon">
+                {/* Download arrow icon */}
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v13M6 11l6 6 6-6" />
+                  <path d="M3 20h18" strokeWidth="1.8" />
+                </svg>
+              </span>
+              <span className="cv-btn-text">
+                <span className="cv-btn-label">Download CV</span>
+               
+              </span>
+            </a>
+          </FadeSlide>
 
         </div>
       </section>
