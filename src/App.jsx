@@ -8,6 +8,7 @@ import AboutMe from './components/AboutMe'
 import IsoSocials from './components/IsoSocials'
 import TechStack from './components/TechStack'
 import Certificates from './components/Certificates'
+import Experience from './components/Experience'
 import Contact from './components/Contact'
 
 // Shared easing
@@ -193,6 +194,13 @@ const App = () => {
       <ScrollReveal>
         <div id="certificates" style={{ position: 'relative', zIndex: 1, marginTop: isMobile ? '32px' : '0px' }}>
           <Certificates theme={theme} />
+        </div>
+      </ScrollReveal>
+
+      {/* Experience */}
+      <ScrollReveal>
+        <div id="experience" style={{ position: 'relative', zIndex: 1, marginTop: isMobile ? '32px' : '0px' }}>
+          <Experience theme={theme} />
         </div>
       </ScrollReveal>
 
