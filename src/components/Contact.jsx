@@ -1,7 +1,12 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { motion, useInView } from 'framer-motion';
+import emailjs from '@emailjs/browser';
 
 const EASE = [0.22, 1, 0.36, 1];
+
+const SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 function FadeSlide({ children, delay = 0 }) {
   const ref = useRef(null);
@@ -25,12 +30,14 @@ function FadeSlide({ children, delay = 0 }) {
 export default function Contact({ theme = 'dark' }) {
   const isDark = theme === 'dark';
 
-  const [form, setForm]       = useState({ name: '', email: '', message: '' });
-  const [status, setStatus]   = useState('idle');
-  const [focused, setFocused] = useState(null);
-  const [tilt, setTilt]       = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
+  const formRef = useRef(null);
   const cardRef = useRef(null);
+
+  const [form, setForm]         = useState({ name: '', email: '', message: '' });
+  const [status, setStatus]     = useState('idle');
+  const [focused, setFocused]   = useState(null);
+  const [tilt, setTilt]         = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
 
   // Theme tokens
   const bg      = isDark ? '#1c1c1c' : '#e0e0e0';
@@ -44,10 +51,8 @@ export default function Contact({ theme = 'dark' }) {
   const borderIdle  = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
   const borderFocus = isDark ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.28)';
 
-  const glossTop    = isDark ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.92)';
-  const glossMid    = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(255,255,255,0.35)';
-  const glossBottom = isDark ? 'rgba(255,255,255,0.01)' : 'rgba(255,255,255,0.1)';
-  const cardBorder  = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.9)';
+  const glossTop   = isDark ? 'rgba(255,255,255,0.13)' : 'rgba(255,255,255,0.92)';
+  const cardBorder = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.9)';
 
   const handleChange = e =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
@@ -55,11 +60,16 @@ export default function Contact({ theme = 'dark' }) {
   const handleSubmit = async e => {
     e.preventDefault();
     setStatus('sending');
-    await new Promise(r => setTimeout(r, 1400));
-    setStatus('sent');
+    try {
+      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, formRef.current, PUBLIC_KEY);
+      setStatus('sent');
+      setForm({ name: '', email: '', message: '' });
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      setStatus('error');
+    }
   };
 
-  // Tilt logic
   const handleMouseMove = useCallback(e => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -111,15 +121,12 @@ export default function Contact({ theme = 'dark' }) {
   return (
     <>
       <style>{`
-       
-
         .contact-section {
           position: relative;
           z-index: 1;
           width: 100%;
           padding: clamp(48px, 8vw, 100px) clamp(16px, 5vw, 60px);
           box-sizing: border-box;
-          
         }
 
         .contact-inner {
@@ -131,8 +138,8 @@ export default function Contact({ theme = 'dark' }) {
         }
 
         .contact-eyebrow {
-          font-size: 0.78rem;
-          font-weight: 500;
+          font-size: 1.22rem;
+          font-weight: 700;
           letter-spacing: 0.24em;
           text-transform: uppercase;
           color: ${accent};
@@ -140,6 +147,7 @@ export default function Contact({ theme = 'dark' }) {
           display: flex;
           align-items: center;
           gap: 10px;
+          
         }
         .contact-eyebrow::before {
           content: '';
@@ -151,13 +159,13 @@ export default function Contact({ theme = 'dark' }) {
         }
 
         .contact-headline {
-         
           font-size: clamp(2.2rem, 5.5vw, 3.8rem);
           font-weight: 600;
           line-height: 1.06;
           letter-spacing: -0.02em;
           margin: 0 0 clamp(22px, 4vw, 36px);
           color: ${text};
+         
         }
         .contact-headline em {
           font-style: italic;
@@ -181,7 +189,6 @@ export default function Contact({ theme = 'dark' }) {
           width: min(520px, 100%);
           padding: clamp(22px, 4vw, 34px) clamp(14px, 3vw, 22px);
           overflow: hidden;
-          transition: transform 0.12s ease, box-shadow 0.3s ease;
           transform-style: preserve-3d;
           will-change: transform;
         }
@@ -308,6 +315,7 @@ export default function Contact({ theme = 'dark' }) {
           letter-spacing: 0.14em;
           color: ${muted};
           text-transform: uppercase;
+          font-family: 'DM Mono', monospace;
         }
         .contact-footer-email {
           font-size: 0.68rem;
@@ -315,13 +323,23 @@ export default function Contact({ theme = 'dark' }) {
           color: ${muted};
           text-decoration: none;
           transition: color 0.2s;
+          font-family: 'DM Mono', monospace;
         }
         .contact-footer-email:hover { color: ${text}; }
+
+        .error-msg {
+          font-family: 'DM Mono', monospace;
+          font-size: 0.62rem;
+          color: #e07070;
+          letter-spacing: 0.1em;
+          text-align: center;
+          margin: 4px 0 0;
+        }
 
         input::placeholder, textarea::placeholder { color: transparent; }
 
         @media (max-width: 420px) {
-          .contact-row { grid-template-columns: 1fr; gap: 16px; }
+          .contact-row { grid-template-columns: 1fr; gap: 12px; }
           .send-btn { width: 100%; }
         }
 
@@ -378,15 +396,18 @@ export default function Contact({ theme = 'dark' }) {
                     transition={{ duration: 0.6, ease: EASE }}
                     style={{ padding: '32px 0', textAlign: 'center', position: 'relative', zIndex: 1 }}
                   >
-                    <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(1.4rem,3vw,2rem)', color: text, margin: '0 0 10px', fontWeight: 400 }}>
+                    <p style={{ fontFamily: "'DM Mono', monospace", fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)', color: text, margin: '0 0 10px', fontWeight: 500 }}>
                       Message received.
                     </p>
-                    <p style={{ fontSize: '0.62rem', color: muted, letterSpacing: '0.12em', margin: 0, textTransform: 'uppercase' }}>
+                    <p style={{ fontFamily: "'DM Mono', monospace", fontSize: '0.62rem', color: muted, letterSpacing: '0.12em', margin: 0, textTransform: 'uppercase' }}>
                       I'll get back to you within a day.
                     </p>
                   </motion.div>
                 ) : (
-                  <form className="contact-form" onSubmit={handleSubmit}>
+                  <form ref={formRef} className="contact-form" onSubmit={handleSubmit}>
+
+                    <input type="hidden" name="title" value="Portfolio Contact" />
+
                     <div className="contact-row">
                       <div>
                         <label style={labelStyle}>Name</label>
@@ -424,8 +445,12 @@ export default function Contact({ theme = 'dark' }) {
                       </div>
                     </div>
 
+                    {status === 'error' && (
+                      <p className="error-msg">Something went wrong. Please try again or email me directly.</p>
+                    )}
+
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
-                      <p style={{ fontSize: '0.58rem', color: muted, margin: 0, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                      <p style={{ fontFamily: "'DM Mono', monospace", fontSize: '0.58rem', color: muted, margin: 0, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
                         All fields required
                       </p>
                       <button type="submit" className="send-btn" disabled={status === 'sending'}>
@@ -449,6 +474,7 @@ export default function Contact({ theme = 'dark' }) {
                         )}
                       </button>
                     </div>
+
                   </form>
                 )}
 
@@ -456,8 +482,8 @@ export default function Contact({ theme = 'dark' }) {
 
                 <div className="contact-footer">
                   <span className="contact-footer-text">or reach me directly</span>
-                  <a href="mailto:aryasankar@example.com" className="contact-footer-email">
-                    aryasankar16@example.com
+                  <a href="mailto:aryasankar16@gmail.com" className="contact-footer-email">
+                    aryasankar16@gmail.com
                   </a>
                 </div>
               </motion.div>

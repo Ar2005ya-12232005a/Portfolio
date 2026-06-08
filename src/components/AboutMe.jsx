@@ -7,9 +7,7 @@ import {
 } from "framer-motion";
 
 const PARAGRAPHS = [
-  "I'm a Computer Science Engineering student passionate about software development, problem-solving, and emerging technologies. I enjoy building web applications, exploring new tools and frameworks, and applying my technical skills to create practical solutions.",
-  "My interests span full-stack development, data structures and algorithms, cloud computing, and core computer science subjects. I'm constantly improving through projects, coding challenges, and continuous learning while strengthening my understanding of software engineering principles.",
-  "Beyond academics, I value discipline, consistency, and self-improvement. My goal is to become a skilled software engineer, contribute to impactful technology solutions, and build products that make a meaningful difference in people's lives.",
+  "I'M A COMPUTER SCIENCE ENGINEERING STUDENT PASSIONATE ABOUT SOFTWARE DEVELOPMENT, PROBLEM-SOLVING, AND EMERGING TECHNOLOGIES. I ENJOY BUILDING WEB APPLICATIONS, EXPLORING NEW TOOLS AND FRAMEWORKS, AND APPLYING MY TECHNICAL SKILLS TO CREATE PRACTICAL SOLUTIONS. MY INTERESTS SPAN FULL-STACK DEVELOPMENT, DATA STRUCTURES AND ALGORITHMS, CLOUD COMPUTING, AND CORE COMPUTER SCIENCE SUBJECTS. I'M CONSTANTLY IMPROVING THROUGH PROJECTS, CODING CHALLENGES, AND CONTINUOUS LEARNING WHILE STRENGTHENING MY UNDERSTANDING OF SOFTWARE ENGINEERING PRINCIPLES. BEYOND ACADEMICS, I VALUE DISCIPLINE, CONSISTENCY, AND SELF-IMPROVEMENT. MY GOAL IS TO BECOME A SKILLED SOFTWARE ENGINEER, CONTRIBUTE TO IMPACTFUL TECHNOLOGY SOLUTIONS, AND BUILD PRODUCTS THAT MAKE A MEANINGFUL DIFFERENCE IN PEOPLE'S LIVES.",
 ];
 
 function FadeSlide({ children, delay = 0, direction = "up" }) {
@@ -129,7 +127,7 @@ export default function AboutMe({ theme = "dark" }) {
         }
 
         .about-para {
-          font-size: clamp(1.05rem, 2.1vw, 1.28rem);
+          font-size: clamp(0.8rem, 1.7vw, 1.0rem);
           line-height: 1.85;
           margin: 0;
           font-weight: 300;
@@ -142,8 +140,8 @@ export default function AboutMe({ theme = "dark" }) {
           align-items: center;
           gap: 11px;
           margin-top: clamp(28px, 4vw, 48px);
-          padding: 14px 26px;
-          border-radius: 10px;
+          padding: 10px 20px;
+          border-radius: 20px;
           background: ${cvBg};
           box-shadow: 6px 6px 14px ${cvShadow1}, -6px -6px 14px ${cvShadow2};
           text-decoration: none;

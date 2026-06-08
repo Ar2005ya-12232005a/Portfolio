@@ -182,7 +182,7 @@ export default function Experience({ theme = 'dark' }) {
               animate={headerInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.65, delay: 0.08, ease: EASE }}
             >
-              EXPERIENCE<br /><em>TIMELINE.</em>
+              EXPERIENCE<br /><em><i>TIMELINE.</i></em>
             </motion.h2>
           </div>
 
