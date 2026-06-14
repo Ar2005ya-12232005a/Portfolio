@@ -379,7 +379,7 @@ const cubeBorderStyle = isDark
             {/* ── Download CV ── */}
             <FadeSlide delay={0.46} direction="up">
               <a
-                href="/STANDUP_FINAL.pdf"
+                href="/Resume.pdf"
                 download
                 className="cv-btn"
                 aria-label="Download CV"
@@ -391,7 +391,7 @@ const cubeBorderStyle = isDark
                   </svg>
                 </span>
                 <span className="cv-btn-text">
-                  <span className="cv-btn-label">Download CV</span>
+                  <span className="cv-btn-label">Download Resume</span>
                 </span>
               </a>
             </FadeSlide>
