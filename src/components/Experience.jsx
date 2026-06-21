@@ -1,5 +1,5 @@
-import { useRef } from 'react'
-import { motion, useInView, useScroll, useTransform } from 'framer-motion'
+import { useRef, useState, useEffect, useCallback } from 'react'
+import { motion, useInView } from 'framer-motion'
 
 const EASE = [0.22, 1, 0.36, 1]
 
@@ -13,70 +13,103 @@ const experiences = [
   { id:7, role:'PYTHON DEVELOPER', company:'YBI FOUNDATION', type:'INTERNSHIP · 1 MOS', period:'FEB 2025', skills:['PYTHON','DATA SCIENCE'], active:false },
 ]
 
-function PathwayNode({ exp, index, theme, isLast, showConnector }) {
+function PathCard({ exp, index, theme, isMobile }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
   const isDark = theme === 'dark'
 
-  // dark: white text | light: pure black for everything
   const primary    = isDark ? '#e8eaf0' : '#111111'
-  const muted      = isDark ? 'rgba(232,234,240,0.5)' : '#111111'
-  const accent     = isDark ? '#666665' : '#111111'
-  const border     = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.1)'
-  const chipBorder = isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.25)'
-  const dots       = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.25)'
+  const muted      = isDark ? 'rgba(232,234,240,0.5)' : 'rgba(17,17,17,0.55)'
+  const accent     = isDark ? '#9a9b9b' : '#444444'
+  const cardBg     = isDark ? 'rgba(255,255,255,0.035)' : 'rgba(0,0,0,0.025)'
+  const cardBorder = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+  const chipBorder = isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.2)'
+  const dotColor   = exp.active ? (isDark ? '#e8eaf0' : '#111111') : (isDark ? '#5a5b5b' : '#999999')
 
   return (
-    <>
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, x: -20 }}
-        animate={inView ? { opacity: 1, x: 0 } : {}}
-        transition={{ duration: 0.6, delay: index * 0.09, ease: EASE }}
-        style={{ position: 'relative' }}
-        className="exp-node-wrap"
-      >
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: isMobile ? 0 : 30, x: isMobile ? -20 : 0 }}
+      animate={inView ? { opacity: 1, y: 0, x: 0 } : {}}
+      transition={{ duration: 0.6, delay: index * 0.08, ease: EASE }}
+      className="exp-path-item"
+    >
+      {/* Node dot on the line */}
+      <div className="exp-path-dot-wrap">
         <motion.div
-          className="exp-node-dot"
+          className="exp-path-dot"
+          style={{ background: dotColor, borderColor: dotColor }}
           initial={{ scale: 0 }}
           animate={inView ? { scale: 1 } : {}}
-          transition={{ duration: 0.3, delay: index * 0.09 + 0.15, ease: EASE }}
+          transition={{ duration: 0.3, delay: index * 0.08 + 0.15, ease: EASE }}
         />
-        <div className="exp-node-inner" style={{ borderBottom: isLast ? 'none' : `0.5px solid ${border}` }}>
-          <p className="exp-node-type" style={{ color: accent }}>{exp.type}</p>
-          <h3 className="exp-node-role" style={{ color: primary }}>{exp.role}</h3>
-          <p className="exp-node-company" style={{ color: primary }}>{exp.company}</p>
-          <p className="exp-node-period" style={{ color: muted }}>{exp.period}</p>
-          <div className="exp-chips">
-            {exp.skills.map((skill) => (
-              <span key={skill} className="exp-chip" style={{ color: muted, border: `0.5px solid ${chipBorder}` }}>
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      </motion.div>
+      </div>
 
-      {showConnector && (
-        <div className="exp-connector">
-          <span className="exp-connector-dots" style={{ color: dots }}>· · ·</span>
+      {/* Card */}
+      <div
+        className="exp-path-card"
+        style={{
+          background: cardBg,
+          border: `0.5px solid ${cardBorder}`,
+        }}
+      >
+        <p className="exp-path-type" style={{ color: accent }}>{exp.type}</p>
+        <h3 className="exp-path-role" style={{ color: primary }}>{exp.role}</h3>
+        <p className="exp-path-company" style={{ color: primary }}>{exp.company}</p>
+        <p className="exp-path-period" style={{ color: muted }}>{exp.period}</p>
+        <div className="exp-path-chips">
+          {exp.skills.map(skill => (
+            <span key={skill} className="exp-path-chip" style={{ color: muted, border: `0.5px solid ${chipBorder}` }}>
+              {skill}
+            </span>
+          ))}
         </div>
-      )}
-    </>
+      </div>
+    </motion.div>
   )
 }
 
 export default function Experience({ theme = 'dark' }) {
   const isDark = theme === 'dark'
-  const sectionRef = useRef(null)
   const headerRef = useRef(null)
+  const scrollRef = useRef(null)
   const headerInView = useInView(headerRef, { once: true, margin: '-40px' })
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
 
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] })
-  const lineScaleX = useTransform(scrollYProgress, [0.1, 0.5], [0, 1])
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
-  const activeExps = experiences.filter((e) => e.active)
-  const pastExps   = experiences.filter((e) => !e.active)
+  const updateArrows = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setCanScrollLeft(el.scrollLeft > 4)
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4)
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el || isMobile) return
+    updateArrows()
+    el.addEventListener('scroll', updateArrows)
+    window.addEventListener('resize', updateArrows)
+    return () => {
+      el.removeEventListener('scroll', updateArrows)
+      window.removeEventListener('resize', updateArrows)
+    }
+  }, [isMobile, updateArrows])
+
+  const scrollByCard = useCallback((dir) => {
+    const el = scrollRef.current
+    if (!el) return
+    const card = el.querySelector('.exp-path-item')
+    const step = card ? card.getBoundingClientRect().width + 0 : 280
+    el.scrollBy({ left: dir * step, behavior: 'smooth' })
+  }, [])
 
   return (
     <>
@@ -89,7 +122,7 @@ export default function Experience({ theme = 'dark' }) {
           padding: clamp(60px, 10vw, 140px) clamp(20px, 6vw, 80px);
           box-sizing: border-box;
         }
-        .exp-inner { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; }
+        .exp-inner { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; }
         .exp-eyebrow {
           font-size: clamp(0.95rem, 2vw, 1.3rem);
           letter-spacing: 0.22em;
@@ -109,107 +142,250 @@ export default function Experience({ theme = 'dark' }) {
           background: var(--accent);
           flex-shrink: 0;
         }
+        .exp-headline-row {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 24px;
+          margin: 0 0 clamp(32px, 5vw, 56px);
+        }
         .exp-headline {
           font-size: clamp(1.9rem, 4.5vw, 3.8rem);
           font-weight: 600;
           line-height: 1;
-          margin: 0 0 clamp(20px, 3vw, 36px);
+          margin: 0;
           letter-spacing: -0.02em;
         }
         .exp-headline em { color: var(--accent); font-style: normal; }
-        .exp-divider {
-          height: 1px;
-          background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
-          transform-origin: left;
-          margin: 0 0 clamp(20px, 3vw, 36px);
+
+        @media (min-width: 1024px) {
+          .exp-header-block {
+            margin-left: clamp(40px, 8vw, 140px);
+          }
         }
-        .exp-track { position: relative; padding-left: 44px; }
-        .exp-track-line {
-          position: absolute;
-          left: 12px; top: 0; bottom: 0;
-          width: 1.5px;
-          background: rgba(74,75,75,0.35);
+
+        /* ── Arrow nav ── */
+        .exp-nav-arrows {
+          display: flex;
+          gap: 10px;
+          flex-shrink: 0;
         }
-        .exp-node-wrap { position: relative; }
-        .exp-node-dot {
-          position: absolute;
-          left: -36px; top: 16px;
-          width: 12px; height: 12px;
-          border: 2px solid #4a4b4b;
-          background: #4a4b4b;
+        .exp-arrow-btn {
+          width: 42px;
+          height: 42px;
           border-radius: 50%;
-          transition: box-shadow 0.3s, background 0.3s, transform 0.25s;
+          border: 1px solid;
+          background: transparent;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.25s, transform 0.2s, opacity 0.25s, border-color 0.25s;
+          flex-shrink: 0;
         }
-        .exp-node-wrap:hover .exp-node-dot {
-          background: #7a7b7b;
-          box-shadow: 0 0 0 5px rgba(74,75,75,0.2), 0 0 16px 6px rgba(74,75,75,0.35);
-          transform: scale(1.2);
+        .exp-arrow-btn:disabled {
+          opacity: 0.25;
+          cursor: default;
         }
-        .exp-node-inner {
-          border-left: 2px solid rgba(74,75,75,0.2);
-          padding: 12px 0 12px 18px;
-          transition: border-left-color 0.3s;
+        .exp-arrow-btn:not(:disabled):hover {
+          transform: scale(1.06);
         }
-        .exp-node-wrap:hover .exp-node-inner { border-left-color: #4a4b4b; }
-        .exp-node-type  { margin: 0; font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; }
-        .exp-node-role  { margin: 5px 0 0; font-size: clamp(1.05rem, 2.1vw, 1.28rem); font-weight: 300; line-height: 1.4; letter-spacing: 0.01em; }
-        .exp-node-company { margin: 3px 0 0; font-size: clamp(1.05rem, 2.1vw, 1.28rem); font-weight: 600; line-height: 1.4; }
-        .exp-node-period  { margin: 3px 0 0; font-size: 0.78rem; letter-spacing: 0.04em; font-weight: 300; }
-        .exp-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 9px; }
-        .exp-chip  { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 2px 8px; font-weight: 600; }
-        .exp-connector { height: 16px; display: flex; align-items: center; padding-left: 2px; }
-        .exp-connector-dots { font-size: 0.5rem; letter-spacing: 3px; }
-        .exp-past-divider { display: flex; align-items: center; gap: 10px; margin: 18px 0 12px; }
-        .exp-past-label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600; white-space: nowrap; }
-        .exp-past-line  { flex: 1; height: 0.5px; }
+        .exp-arrow-btn:not(:disabled):active {
+          transform: scale(0.94);
+        }
+        .exp-arrow-btn svg {
+          width: 18px;
+          height: 18px;
+        }
+
+        /* ── Horizontal path (desktop / tablet) ── */
+        .exp-path-scroll {
+          position: relative;
+          overflow-x: auto;
+          overflow-y: visible;
+          padding: 8px 4px 14px;
+          margin: 0 -4px;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .exp-path-scroll::-webkit-scrollbar { display: none; }
+        .exp-path-track {
+          position: relative;
+          display: flex;
+          align-items: flex-start;
+          gap: 0;
+          min-width: max-content;
+          padding-top: 18px;
+        }
+        .exp-path-line {
+          position: absolute;
+          left: 0; right: 0; top: 18px;
+          height: 1.5px;
+          background: rgba(120,120,120,0.3);
+          z-index: 0;
+        }
+        .exp-path-item {
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 270px;
+          flex-shrink: 0;
+          padding: 0 14px;
+        }
+        .exp-path-dot-wrap {
+          position: relative;
+          z-index: 1;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          margin-bottom: 18px;
+        }
+        .exp-path-dot {
+          width: 12px; height: 12px;
+          border-radius: 50%;
+          border: 2px solid;
+          transition: transform 0.25s, box-shadow 0.3s;
+        }
+        .exp-path-item:hover .exp-path-dot {
+          transform: scale(1.3);
+          box-shadow: 0 0 0 6px rgba(128,128,128,0.18);
+        }
+        .exp-path-card {
+          width: 100%;
+          border-radius: 4px;
+          padding: 16px 16px 18px;
+          box-sizing: border-box;
+          transition: transform 0.3s, border-color 0.3s, background 0.3s;
+        }
+        .exp-path-item:hover .exp-path-card {
+          transform: translateY(-4px);
+        }
+        .exp-path-type    { margin: 0; font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
+        .exp-path-role    { margin: 7px 0 0; font-size: clamp(0.95rem, 1.6vw, 1.05rem); font-weight: 300; line-height: 1.35; letter-spacing: 0.01em; }
+        .exp-path-company { margin: 2px 0 0; font-size: clamp(0.95rem, 1.6vw, 1.05rem); font-weight: 600; line-height: 1.35; }
+        .exp-path-period  { margin: 6px 0 0; font-size: 0.72rem; letter-spacing: 0.04em; font-weight: 300; }
+        .exp-path-chips   { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+        .exp-path-chip    { font-size: 0.58rem; letter-spacing: 0.13em; text-transform: uppercase; padding: 2px 7px; font-weight: 600; border-radius: 2px; }
+
+        /* ── Vertical fallback (mobile) ── */
+        .exp-path-vertical { display: none; }
+
+        @media (max-width: 767px) {
+          .exp-nav-arrows { display: none; }
+          .exp-path-scroll { display: none; }
+          .exp-path-vertical {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-left: 30px;
+            gap: 22px;
+          }
+          .exp-path-vertical .exp-path-line-v {
+            position: absolute;
+            left: 6px; top: 6px; bottom: 6px;
+            width: 1.5px;
+            background: rgba(120,120,120,0.3);
+          }
+          .exp-path-vertical .exp-path-item {
+            width: 100%;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 0;
+          }
+          .exp-path-vertical .exp-path-item:last-child { padding-bottom: 0; }
+          .exp-path-vertical .exp-path-dot-wrap {
+            position: absolute;
+            left: -30px;
+            top: 16px;
+            width: auto;
+            margin-bottom: 0;
+          }
+          .exp-path-vertical .exp-path-card {
+            width: 100%;
+          }
+        }
       `}</style>
 
-      <section id="experience" className="exp-section" ref={sectionRef}>
+      <section id="experience" className="exp-section">
         <div className="exp-inner">
-          <div ref={headerRef}>
-            <motion.p
-              className="exp-eyebrow"
-              initial={{ opacity: 0, y: 10 }}
-              animate={headerInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, ease: EASE }}
-            >
-              Career Pathway
-            </motion.p>
-            <motion.h2
-              className="exp-headline"
-              style={{ color: isDark ? '#e8eaf0' : '#111111' }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={headerInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.65, delay: 0.08, ease: EASE }}
-            >
-              EXPERIENCE<br /><em><i>TIMELINE.</i></em>
-            </motion.h2>
+          <div className="exp-headline-row">
+            <div ref={headerRef} className="exp-header-block">
+              <motion.p
+                className="exp-eyebrow"
+                initial={{ opacity: 0, y: 10 }}
+                animate={headerInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, ease: EASE }}
+              >
+                Career Pathway
+              </motion.p>
+              <motion.h2
+                className="exp-headline"
+                style={{ color: isDark ? '#e8eaf0' : '#111111' }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={headerInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.65, delay: 0.08, ease: EASE }}
+              >
+                EXPERIENCE<br /><em><i>TIMELINE.</i></em>
+              </motion.h2>
+            </div>
+
+            {/* ── Forward / backward arrows (desktop / tablet only) ── */}
+            {!isMobile && (
+              <div className="exp-nav-arrows">
+                <button
+                  className="exp-arrow-btn"
+                  onClick={() => scrollByCard(-1)}
+                  disabled={!canScrollLeft}
+                  aria-label="Previous"
+                  style={{
+                    borderColor: isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)',
+                    color: isDark ? '#e8eaf0' : '#111111',
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 18l-6-6 6-6" />
+                  </svg>
+                </button>
+                <button
+                  className="exp-arrow-btn"
+                  onClick={() => scrollByCard(1)}
+                  disabled={!canScrollRight}
+                  aria-label="Next"
+                  style={{
+                    borderColor: isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)',
+                    color: isDark ? '#e8eaf0' : '#111111',
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
 
-          <motion.div className="exp-divider" style={{ scaleX: lineScaleX }} />
+          {/* ── Horizontal path (desktop / tablet) — navigate with arrows, no visible scrollbar ── */}
+          {!isMobile && (
+            <div className="exp-path-scroll" ref={scrollRef}>
+              <div className="exp-path-track">
+                <div className="exp-path-line" />
+                {experiences.map((exp, i) => (
+                  <PathCard key={exp.id} exp={exp} index={i} theme={theme} isMobile={false} />
+                ))}
+              </div>
+            </div>
+          )}
 
-          <div className="exp-track">
-            <div className="exp-track-line" />
-
-            {activeExps.map((exp, i) => (
-              <PathwayNode key={exp.id} exp={exp} index={i} theme={theme} isLast={false} showConnector={i < activeExps.length - 1} />
-            ))}
-
-            <motion.div
-              className="exp-past-divider"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: EASE }}
-            >
-              <span className="exp-past-label" style={{ color: isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.4)' }}>Past</span>
-              <div className="exp-past-line" style={{ background: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.15)' }} />
-            </motion.div>
-
-            {pastExps.map((exp, i) => (
-              <PathwayNode key={exp.id} exp={exp} index={activeExps.length + i} theme={theme} isLast={i === pastExps.length - 1} showConnector={i < pastExps.length - 1} />
-            ))}
-          </div>
+          {/* ── Vertical fallback (mobile) ── */}
+          {isMobile && (
+            <div className="exp-path-vertical">
+              <div className="exp-path-line-v" />
+              {experiences.map((exp, i) => (
+                <PathCard key={exp.id} exp={exp} index={i} theme={theme} isMobile={true} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>
