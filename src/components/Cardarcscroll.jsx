@@ -14,10 +14,6 @@ const QUOTES = [
   { text: "Dream big and dare to fail.", author: "Norman Vaughan" },
 ];
 
-// ── Color palette for accents — cycles through cards ────────────
-const ACCENTS_DARK  = ["#e8a87c", "#9fc5e8", "#c9a0dc", "#7fc7a3", "#e88c8c", "#a8c97f", "#d6a8e8", "#7ce0d3", "#e8c97f"];
-const ACCENTS_LIGHT = ["#d9534f", "#3b6fa0", "#7a4fa0", "#3f8f6a", "#c0394f", "#5a7d2e", "#8a3f9c", "#1e8a78", "#b8860b"];
-
 const getFinalRot = (i, total) => -60 + i * (360 / total);
 
 function computeStackedOffset(initialAngleDeg, cardW, cardH) {
@@ -38,11 +34,10 @@ function CardItem({ quote, index, total, progress, initialAngle, cardW, cardH, c
   const isDark = theme === "dark";
   const rotate = useTransform(progress, [0, 1], [initialAngle, getFinalRot(index, total)]);
 
-  const accent   = isDark ? ACCENTS_DARK[index % ACCENTS_DARK.length] : ACCENTS_LIGHT[index % ACCENTS_LIGHT.length];
-  const cardBg   = isDark ? "#1c1c1c" : "#f3ece9";
-  const textCol  = isDark ? "#e8e6e3" : "#2b2b2b";
-  const subCol   = isDark ? "rgba(232,230,227,0.45)" : "rgba(43,43,43,0.45)";
-  const border   = isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.05)";
+  const cardBg   = isDark ? "#1c1c1c" : "#FFFFFF";
+  const textCol  = isDark ? "#ffffff" : "#111111";
+  const subCol   = isDark ? "rgba(242,242,242,0.45)" : "rgba(17,17,17,0.45)";
+  const border   = isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)";
 
   // scale font/padding relative to card size so it stays readable at any responsive scale
   const scaleFactor = cardW / 240;
@@ -83,7 +78,7 @@ function CardItem({ quote, index, total, progress, initialAngle, cardW, cardH, c
           style={{
             fontSize: `${30 * scaleFactor}px`,
             fontWeight: 900,
-            color: accent,
+            color: textCol,
             lineHeight: 0.6,
             fontFamily: "Georgia, serif",
           }}
@@ -95,7 +90,7 @@ function CardItem({ quote, index, total, progress, initialAngle, cardW, cardH, c
         <p
           style={{
             margin: 0,
-            color: accent,
+            color: textCol,
             fontWeight: 700,
             fontSize: `${Math.max(9, 12.5 * scaleFactor)}px`,
             lineHeight: 1.32,

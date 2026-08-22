@@ -41,7 +41,7 @@ function CardItem({ quote, index, total, progress, initialAngle, cardW, cardH, c
   );
 
   const textColor = isDark ? "#ffffff" : "#000000";
-  const cardBg  = isDark ? "#1c1c1c" : "#f3ece9";
+  const cardBg  = isDark ? "#1c1c1c" : "#FFFFFF";
   const subCol  = isDark ? "rgba(255,255,255,0.55)" : "rgba(0,0,0,0.55)";
   const border  = isDark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.08)";
 
@@ -294,12 +294,17 @@ export default function AboutMe({ theme = "dark" }) {
           margin: 0 auto;
         }
 
-        /* ── Card arc panel ── */
+        /* ── Card arc panel (desktop/tablet) ── */
         .about-arc {
           width: 100%;
           aspect-ratio: 1 / 1;
           position: relative;
           overflow: hidden;
+        }
+
+        /* ── Card arc panel (mobile only) — hidden by default ── */
+        .about-arc-mobile {
+          display: none;
         }
 
         .about-inner {
@@ -428,6 +433,15 @@ export default function AboutMe({ theme = "dark" }) {
           .about-vert-text { display: none; }
           .cv-btn { width: 100%; justify-content: center; }
 
+          .about-arc-mobile {
+            display: block;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            overflow: hidden;
+            margin: 0 0 clamp(20px, 5vw, 32px);
+          }
+
           .about-mobile-img {
             display: block;
             width: clamp(160px, 50vw, 240px);
@@ -447,6 +461,7 @@ export default function AboutMe({ theme = "dark" }) {
 
         @media (min-width: 768px) and (max-width: 1023px) {
           .about-arc { display: none; }
+          .about-arc-mobile { display: none; }
           .about-layout { grid-template-columns: 1fr; max-width: 760px; }
         }
       `}</style>
@@ -469,7 +484,7 @@ export default function AboutMe({ theme = "dark" }) {
 
         <div className="about-layout">
 
-          {/* ── LEFT: Card Arc Scroll ── */}
+          {/* ── LEFT: Card Arc Scroll (desktop/tablet) ── */}
           <FadeSlide delay={0} direction="right">
             <div className="about-arc">
               <CardArcScroll theme={theme} />
@@ -478,6 +493,11 @@ export default function AboutMe({ theme = "dark" }) {
 
           {/* ── RIGHT: Text content ── */}
           <div className="about-inner">
+
+            {/* Card Arc Scroll — mobile only, sits just above the "About Me" heading */}
+            <div className="about-arc-mobile">
+              <CardArcScroll theme={theme} />
+            </div>
 
             <FadeSlide delay={0.1}>
               <p className="about-eyebrow">About Me</p>
